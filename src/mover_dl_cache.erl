@@ -3,7 +3,8 @@
 %% @author Marc Paradise <marc@opscode.com>
 %% @copyright 2013 Opscode, Inc.
 
-%% @oc Provides an interface to check and non-destructively set org migration state
+%% @oc Provides an interface to check and non-destructively set default, org, and override
+%% migration states.
 
 -module(mover_dl_cache).
 
@@ -24,13 +25,13 @@
          fetch_dl_state/1]).
 
 % TODO move to hrl
-% TODO necessary wwwor is undefined valid for any field value and bool() is usable? 
+% TODO necessary or is undefined valid for any field value and boolean() is usable? 
 -type maybe_bool() :: undefined | true | false.
 -type target() :: {org, string()} | default | override.
 
 -record(dl_state, {
             target :: target(),
-            downtime_enabled = false :: maybe_bool(),
+            downtime_enabled :: maybe_bool(),
             couchdb_checksums :: maybe_bool(),
             couchdb_clients :: maybe_bool(),
             couchdb_cookbooks :: maybe_bool(),
