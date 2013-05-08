@@ -8,12 +8,6 @@ Erchef/PgSQL using moser and darklaunch.
 ## Dev Setup ##
 
 ### One-time configuration ###
-1. Ensure you have a recent (as of 4/30/13) opscode basebox. If upon
-   starting you see chef-client version earlier than 11, you should
-   force an update as follows on the host:
-   ````
-   rm -rf  ~/.vagrant.d/boxes/opscode-ubuntu-12.04
-   ````
 1. Obtain git checkouts of [this repo][] and the [moser][] repo and ensure they are in the same parent directory.
 
 1. Add an export for an `OPSCODE_PLATFORM_REPO` environment variable to your shell config that points to the path of your **rs-preprod** checkout of the [opscode-platform-cookbooks][] repo.
