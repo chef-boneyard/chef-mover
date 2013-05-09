@@ -39,7 +39,10 @@
 -record(state, { account_info :: term(),   % TODO #account_info for moser, provided via init config
                  ms :: #migration_state{}, % migration state persistance record
                  start_time :: term(),     % timestamp indicating start of migration operation
-                 error :: term()           % the error that has placed us in failure state.
+                 error :: term(),           % the error that has placed us in failure state.
+                 state_update_status :: term() % Capture state persistence
+                                               % result where appropriate so we can
+                                               % abort if necessary on failure.
                }).
 
 start_link(Config) ->
@@ -47,7 +50,10 @@ start_link(Config) ->
 
 init(#migration_state{} = MS) ->
     State = #state{ms = MS, start_time = os:timestamp()},
+    % Crash and burn if we can't at least mark the org inflight, to prevent a race
+    % condition where multiple FSM instances attempt to process the same org.
     State1 = persist_state(State, inflight, init),
+    #state{state_update_status = ok} = State1,
     {ok, disable_org_access, State1, 0}.
 
 disable_org_access(timeout, State) ->
@@ -66,7 +72,10 @@ migrate_org(timeout, State) ->
         [{ok, _}] ->
             {next_state, verify_org, State1, 0};
         {error, Error} ->
-            State2 = persist_state(State1, inflight, migrate_org, Error),
+            State2 = persist_state(State1, failure, migrate_org, Error),
+            {next_state, abort_migration, State2, 0};
+        OtherError ->
+            State2 = persist_state(State1, failure, migrate_org, OtherError),
             {next_state, abort_migration, State2, 0}
     end.
 
@@ -78,7 +87,7 @@ verify_org(timeout, State) ->
         ok ->
             {next_state, set_org_to_sql, State1, 0};
         {error, Error} ->
-            State2 = persist_state(State1, failed, verify_org, Error),
+            State2 = persist_state(State1, failure, verify_org, Error),
             {next_state, abort_migration, State2, 0}
     end.
 
@@ -141,8 +150,8 @@ persist_state(#state{start_time = Start, ms = MS} = State, OrgState, Stage, Erro
                 last_step = Stage,
                 migration_duration = timer:now_diff(os:timestamp(), Start)},
     log_state_result(MS2, Error),
-    {_, MS3} = moser_state_tracker:update_state(MS2),
-    State#state{ms = MS3, error = Error}.
+    {UpdateStatus, MS3} = moser_state_tracker:update_state(MS2),
+    State#state{ms = MS3, error = Error, state_update_status = UpdateStatus}.
 
 log_state_result(#migration_state{ state = failure, last_step = Stage } = MS, Error) ->
     lager:error(?MS_LOG_META(MS),
