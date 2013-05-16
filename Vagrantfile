@@ -89,7 +89,10 @@ Vagrant::Config.run do |config|
         }
       },
       "mover" => { "dev_mode" => true },
-      "munin" => { "stub" => true }
+      "munin" => { "stub" => true },
+      "tags" => [
+        # "mover-dry-run" # don't orchestrate via redis
+      ]
     }
     chef.data_bags_path = "#{ENV['OPSCODE_PLATFORM_REPO']}/data_bags"
     chef.roles_path = "#{ENV['OPSCODE_PLATFORM_REPO']}/roles"
