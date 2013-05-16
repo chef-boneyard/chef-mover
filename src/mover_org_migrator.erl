@@ -41,18 +41,25 @@
                  org_name :: string(),   % name of the org being migrated
                  org_guid :: string(),   % guid of the org being migrated
                  start_time :: term(),   % timestamp indicating start of migration operation
-                 error :: term()         % the error that has placed us in failure state.
+                 error :: term(),        % the error that has placed us in failure state.
+                 dry_run :: boolean()    % whether to perform redis operations and switch org via load balancer
                }).
 
 start_link(Config) ->
     gen_fsm:start_link(?MODULE, Config, []).
 
-init(Config) ->
+init({OrgName, DryRun}) ->
     % TODO config is currently just org name, we may want to
     % factor up some of the account_info stuff out of moser.
-    OrgGuid = moser_utils:orgname_to_guid(Config),
-    {ok, disable_org_access, #state{org_name = Config, org_guid = OrgGuid, start_time = os:timestamp()}, 0}.
+    OrgGuid = moser_utils:orgname_to_guid(OrgName),
+    {ok, disable_org_access, #state{org_name = OrgName,
+                                    org_guid = OrgGuid,
+                                    start_time = os:timestamp(),
+                                    dry_run = DryRun}, 0}.
 
+disable_org_access(timeout, #state{org_name = OrgName, dry_run = true} = State) ->
+    lager:info(?ORG_META(OrgName), "Dry Run - skipping maintenance mode", []),
+    {next_state, migrate_org, State, 0};
 disable_org_access(timeout, #state{org_name = OrgName} = State) ->
     lager:info(?ORG_META(OrgName), "Placing organization into maintenance mode", []),
     case mover_org_darklaunch:disable_org(OrgName) of
@@ -62,6 +69,7 @@ disable_org_access(timeout, #state{org_name = OrgName} = State) ->
             %lager:error(?ORG_META(OrgName), "Failed to place org into maintenance mode, skipping it: ~p", [Error]),
             {stop, {error, Error}, State}
     end.
+
 
 migrate_org(timeout, #state{org_name = OrgName} = State) ->
     lager:info(?ORG_META(OrgName), "Migrating organization data", []),
@@ -86,7 +94,9 @@ verify_org(timeout, #state{org_name = OrgName} = State) ->
             {next_state, abort_migration, #state{error = Error} = State, 0}
     end.
 
-
+set_org_to_sql(timeout, #state{org_name = OrgName, dry_run = true} = State) ->
+    lager:info(?ORG_META(OrgName), "Dry Run - Skipping switching org to sql", []),
+    {next_state, enable_org_access, State, 0};
 set_org_to_sql(timeout, #state{org_name = OrgName} = State) ->
     lager:info(?ORG_META(OrgName), "Setting organization to SQL mode", []),
     case mover_org_darklaunch:org_to_sql(OrgName, ?PHASE_2_MIGRATION_COMPONENTS) of
@@ -98,6 +108,9 @@ set_org_to_sql(timeout, #state{org_name = OrgName} = State) ->
             {next_state, abort_migration, #state{error = Error} = State, 0}
     end.
 
+enable_org_access(timeout, #state{org_name = OrgName, dry_run = true} = State) ->
+    lager:info(?ORG_META(OrgName), "Dry Run - skipping org enable", []),
+    {next_state, complete_migration, State, 0};
 enable_org_access(timeout, #state{org_name = OrgName} = State) ->
     lager:info(?ORG_META(OrgName), "Removing organization from maintenance mode, enabling access", []),
     case mover_org_darklaunch:enable_org(OrgName) of
@@ -142,6 +155,3 @@ terminate(_Reason, _StateName, _State) ->
 
 code_change(_OldVsn, StateName, State, _Extra) ->
     {ok, StateName, State}.
-
-
-
