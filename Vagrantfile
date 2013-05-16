@@ -1,4 +1,3 @@
-require 'berkshelf/vagrant'
 require 'fileutils'
 
 if ENV['OPSCODE_PLATFORM_REPO'].nil?
@@ -12,7 +11,7 @@ if !File.exists?(".chef/knife.rb")
                   ".chef/knife.rb")
 end
 
-Vagrant::Config.run do |config|
+Vagrant.configure("1") do |config|
   # All Vagrant configuration is done here. The most common configuration
   # options are documented and commented below. For a complete reference,
   # please see the online documentation at vagrantup.com.
