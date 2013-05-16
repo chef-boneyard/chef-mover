@@ -63,6 +63,7 @@ Vagrant.configure("1") do |config|
 
   # allow creating symlinks in /vagrant
   config.vm.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate/v-root", "1"]
+  config.vm.customize ["modifyvm", :id, "--memory", "1024"]
   config.vm.share_folder "moser", "/mnt/moser", "../moser"
   config.vm.share_folder "decouch", "/mnt/decouch", "../decouch"
   config.vm.provision :chef_solo do |chef|
