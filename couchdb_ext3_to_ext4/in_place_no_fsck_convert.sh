@@ -23,8 +23,7 @@ sudo /etc/init.d/couchdb stop
 
 # convert the filesystem
 umount $COUCH_DEVICE
-tune2fs -O extents,uninit_bg,dir_index,dir_nlink $COUCH_DEVICE
-e2fsck -fDC0 $COUCH_DEVICE || handle_errors
+tune2fs -O extents,dir_index,dir_nlink $COUCH_DEVICE
 mount $COUCH_DEVICE $COUCH_DATA
 
 # start couchdb
