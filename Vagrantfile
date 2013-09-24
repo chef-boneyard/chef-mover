@@ -56,6 +56,9 @@ Vagrant.configure("2") do |config|
 	config.vm.synced_folder "../moser", "/mnt/moser"
 	config.vm.synced_folder "../decouch", "/mnt/decouch"
 
+	# Here for testing if you need to load up uncommitted schema changes
+	# config.vm.synced_folder "../enterprise-chef-server-schema", "/mnt/enterprise-chef-server-schema"
+
   config.ssh.max_tries = 40
   config.ssh.timeout   = 120
 
@@ -75,8 +78,8 @@ Vagrant.configure("2") do |config|
   # config.berkshelf.only = []
 
   # An array of symbols representing groups of cookbook described in the Vagrantfile
-  # to skip installing and copying to Vagrant's shelf.
   # config.berkshelf.except = []
+  # to skip installing and copying to Vagrant's shelf.
 
   # Ensure Chef is installed for provisioning
   config.omnibus.chef_version = ENV['OMNIBUS_CHEF_VERSION'] || :latest
@@ -88,14 +91,17 @@ Vagrant.configure("2") do |config|
           "postgres" => "iloverandompasswordsbutthiswilldo"
         }
       },
+      "sqitch" => { "engine" => "pg" },
       "mover" => { "dev_mode" => true,
-                   "enable_demigrate" => false },
+                   "enable_demigrate" => false,
+                   "schema_rev" => "mp/OC-9934" },
       "munin" => { "stub" => true }
     }
     chef.data_bags_path = "#{ENV['OPSCODE_PLATFORM_REPO']}/data_bags"
     chef.roles_path = "#{ENV['OPSCODE_PLATFORM_REPO']}/roles"
     chef.run_list = [
       "recipe[opscode-dev-shim]",
+      "recipe[sqitch]",
       "recipe[opscode-chef-mover::dev]",
       "recipe[opscode-chef-mover::default]",
       "recipe[opscode-xdarklaunch::dev]",
