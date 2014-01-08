@@ -45,7 +45,7 @@ main(Other) when is_list(Other) ->
 main(NoiseLevel) when is_atom(NoiseLevel) ->
     {ExitCode, Message} = try
         init_network(),
-        report(NoiseLevel, "~nKicking off migration. This might take a while.~nEstimated time: ~ps", [estimated_time()]),
+        report(NoiseLevel, "~nKicking off migration. This might take a while.~nEstimated time: ~ps~n", [estimated_time()]),
         migrate(),
         sleep_until_migration_finished(),
         parse_and_format(NoiseLevel, conversion_status())
