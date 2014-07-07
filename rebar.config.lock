@@ -56,7 +56,7 @@
                    "58ded93d5c47675899d8e5e1589270f340ea66c5"}},
        {chef_objects,".*",
                      {git,"git@github.com:opscode/chef_objects.git",
-                          "d86aaab23bc811dfe2b6a8033edd2ca8e2df5b50"}},
+                          "b79ffc47c7a47913979007b291d6765009756eee"}},
        {depsolver,".*",
                   {git,"git@github.com:opscode/depsolver.git",
                        "62f07401f56ac22d699c7c2d062af11b396c85b9"}},
