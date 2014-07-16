@@ -1,4 +1,4 @@
--module(mover_org_user_association_migration_callback).
+-module(mover_org_user_invites_migration_callback).
 
 -export([
 	 migration_init/0,
@@ -16,7 +16,7 @@
 
 migration_init() ->
     AcctInfo = moser_acct_processor:open_account(),
-    AllUserOrgAssoc = moser_acct_processor:all_org_association_data(AcctInfo, org_user),
+    AllUserOrgAssoc = moser_acct_processor:all_org_association_data(AcctInfo, association_request),
     mover_transient_migration_queue:initialize_queue(?MODULE, AllUserOrgAssoc).
 
 migration_start_worker_args(Object, AcctInfo) ->
@@ -25,14 +25,14 @@ migration_start_worker_args(Object, AcctInfo) ->
 migration_action(Object, AcctInfo) ->
     {UserGuid, OrgGuid, LastUpdatedBy, UserBody} = Object,
     OrgInfo = moser_acct_processor:expand_org_info(#org_info{org_id = OrgGuid, account_info = AcctInfo}),
-    moser_org_converter:insert_org_user_association(OrgInfo, UserGuid, OrgGuid, LastUpdatedBy, UserBody),
+    moser_org_converter:insert_org_user_invite(OrgInfo, UserGuid, OrgGuid, LastUpdatedBy, UserBody),
     ok.
 
 next_object() ->
     mover_transient_migration_queue:next(?MODULE).
 
 migration_type() ->
-    <<"org_user_association_migration">>.
+    <<"org_user_invites_migration">>.
 
 supervisor() ->
     mover_transient_worker_sup.

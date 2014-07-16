@@ -16,8 +16,8 @@ migration_start_worker_args(Object, AcctInfo) ->
     [Object, AcctInfo].
 
 migration_action(OrgName, AcctInfo) ->
-    {Guid, AuthzId, Name, FullName, AssignedAt, LastUpdatedBy, RawObject} = moser_acct_processor:get_parsed_org_object_by_name(AcctInfo, OrgName),
-    moser_org_converter:insert_org(Guid, AuthzId, Name, FullName, AssignedAt, LastUpdatedBy, RawObject),
+    {Guid, AuthzId, LastUpdatedBy, RawObject} = moser_acct_processor:get_parsed_org_object_by_name(AcctInfo, OrgName),
+    moser_org_converter:insert_org(Guid, AuthzId, LastUpdatedBy, RawObject),
     [{ok, done}].
 
 migration_type() ->
