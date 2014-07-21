@@ -24,8 +24,14 @@ migration_start_worker_args(Object, AcctInfo) ->
 
 migration_action(Object, AcctInfo) ->
     {UserGuid, OrgGuid, LastUpdatedBy, UserBody} = Object,
-    OrgInfo = moser_acct_processor:expand_org_info(#org_info{org_id = OrgGuid, account_info = AcctInfo}),
-    moser_org_converter:insert_org_user_invite(OrgInfo, UserGuid, OrgGuid, LastUpdatedBy, UserBody),
+    try
+	OrgInfo = moser_acct_processor:expand_org_info(#org_info{org_id = OrgGuid, account_info = AcctInfo}),
+	moser_org_converter:insert_org_user_invite(OrgInfo, UserGuid, OrgGuid, LastUpdatedBy, UserBody)
+    catch
+	Exception:Reason ->
+	    lager:error("org_user_invites_failure org_id: ~p user_id: ~p Exception: ~p Reason: ~p Stacktrace: ~p ~n",
+			[OrgGuid, UserGuid, Exception, Reason, erlang:get_stacktrace()])
+    end,
     ok.
 
 next_object() ->
