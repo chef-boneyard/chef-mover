@@ -155,7 +155,7 @@ migrate_user_password_storage(NumUsers, NumWorkers) ->
 %% the transient queue, even if it has contents left from a previous run.
 
 status() ->
-    gen_fsm:sync_send_all_state_event(?SERVER, status).
+    gen_fsm:sync_send_all_state_event(?SERVER, status, 30000).
 
 
 set_concurrency(NewConcurrency) when is_integer(NewConcurrency) and (NewConcurrency > 0) ->

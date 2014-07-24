@@ -73,5 +73,5 @@ code_change(_OldVsn, StateName, State, _Extra) ->
 %% Internal
 %%
 stop_with_failure(State, Error, LastState) ->
-    lager:error([], "Processing aborted in ~p due to error: ~p ~n ~p", [LastState, Error, erlang:get_stacktrace()]),
+    lager:error([], "Processing aborted in ~p due to error: ~p", [LastState, Error]),
     {stop, {error, Error, LastState}, State}.

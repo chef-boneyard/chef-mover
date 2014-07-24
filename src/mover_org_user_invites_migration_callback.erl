@@ -1,3 +1,7 @@
+%% -*- erlang-indent-level: 4;indent-tabs-mode: nil; fill-column: 92 -*-
+%% ex: ts=4 sw=4 et
+%% @author Tyler Cloke <tyler@getchef.com>
+%% @copyright 2014 Chef, Inc.
 -module(mover_org_user_invites_migration_callback).
 
 -export([
