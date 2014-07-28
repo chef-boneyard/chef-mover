@@ -36,7 +36,7 @@ migration_action(OrgName, AcctInfo) ->
         Exception:Reason ->
 	    lager:error("org_migration_failure org_name: ~p Exception: ~p Reason: ~p Stacktrace: ~p ~n",
 			[OrgName, Exception, Reason, erlang:get_stacktrace()]),
-            error
+            ok
     end.
 
 migration_type() ->
