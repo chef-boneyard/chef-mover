@@ -140,7 +140,8 @@ migrate(all, NumWorkers, CallbackModule) ->
     migrate(-1, NumWorkers, CallbackModule);
 migrate(NumOrgs, NumWorkers, CallbackModule) ->
     Worker = #migration_worker{callback_module = CallbackModule},
-    gen_fsm:sync_send_event(?SERVER, {start, NumOrgs, NumWorkers, Worker}).
+    % give 10 second timeout since loading migration queues can take awhile
+    gen_fsm:sync_send_event(?SERVER, {start, NumOrgs, NumWorkers, Worker}, 10000).
 
 %% Migrate user password hash from sha1 embedded in json to dedicated fields
 %% using bcrypt.
