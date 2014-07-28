@@ -89,7 +89,7 @@
                         "12cbd38e9d4405628e498cf37992da15930ba1aa"}},
        {chef_db,".*",
                 {git,"git@github.com:opscode/chef_db.git",
-                     "f75644f51de159a5e08cda6f71c8501bb9841ffd"}},
+                     "135cb445f68509d61756a09af35ac6ecf772860b"}},
        {darklaunch,".*",
                    {git,"git@github.com:opscode/opscode-darklaunch-erlang.git",
                         "1beb97d8e81fddcfc19af870b3dbf08bfdb810b3"}},
@@ -146,7 +146,7 @@
                             "398e5e8b668d9826251fed9eb8278abd9f197481"}},
        {oc_chef_wm,".*",
                    {git,"git@github.com:opscode/oc_chef_wm.git",
-                        "3719363e4a29dc4cc72ac8f5d34f25d3f3baa22d"}},
+                        "94f98a016cc52f47e8e09867cda7ef42e71463f6"}},
        {hoax,".*",
              {git,"https://github.com/xenolinguist/hoax.git",
                   "093d2afc2e4ca2d7ab9779aeb3e09dd427a964f2"}}]}.
