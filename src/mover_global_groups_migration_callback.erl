@@ -1,4 +1,10 @@
--module(mover_global_containers_migration_callback).
+%% -*- erlang-indent-level: 4;indent-tabs-mode: nil; fill-column: 92 -*-
+%% ex: ts=4 sw=4 et
+%% @author Tyler Cloke <tyler@getchef.com>
+%%
+%% Copyright 2014 Chef, Inc. All Rights Reserved.
+
+-module(mover_global_groups_migration_callback).
 
 -export([
 	 migration_init/0,
@@ -16,7 +22,7 @@
 
 migration_init() ->
     AcctInfo = moser_acct_processor:open_account(),
-    mover_transient_migration_queue:initialize_queue(?MODULE, moser_acct_processor:get_global_containers_list(AcctInfo)).
+    mover_transient_migration_queue:initialize_queue(?MODULE, moser_acct_processor:get_global_groups_list(AcctInfo)).
 
 migration_start_worker_args(Object, AcctInfo) ->
     [Object, AcctInfo].
@@ -25,11 +31,12 @@ next_object() ->
     mover_transient_migration_queue:next(?MODULE).
 
 migration_action(Object, _AcctInfo) ->
-    {Guid, AuthzId, RequesterId, ContainerName, Data} = Object,
-    moser_global_object_converter:insert_container(Guid, AuthzId, RequesterId, ContainerName, Data).
+    {Guid, AuthzId, RequesterId, GroupName, Data} = Object,
+    moser_global_object_converter:insert_group(Guid, AuthzId, RequesterId, GroupName, Data),
+    ok.
 
 migration_type() ->
-    <<"global_container_migration">>.
+    <<"global_groups_migration">>.
 
 supervisor() ->
     mover_transient_worker_sup.
