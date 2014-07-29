@@ -31,8 +31,8 @@ next_object() ->
     mover_transient_migration_queue:next(?MODULE).
 
 migration_action(Object, _AcctInfo) ->
-    {Guid, AuthzId, RequesterId, GroupName, Data} = Object,
-    moser_global_object_converter:insert_group(Guid, AuthzId, RequesterId, GroupName, Data),
+    {Guid, AuthzId, RequesterId, Data} = Object,
+    moser_global_object_converter:insert_group(Guid, AuthzId, RequesterId, Data),
     ok.
 
 migration_type() ->
