@@ -31,8 +31,14 @@ next_object() ->
     mover_transient_migration_queue:next(?MODULE).
 
 migration_action(Object, _AcctInfo) ->
-    {Guid, AuthzId, RequesterId, Data} = Object,
-    moser_global_object_converter:insert_group(Guid, AuthzId, RequesterId, Data),
+    try
+        {Guid, AuthzId, RequesterId, Data} = Object,
+        moser_global_object_converter:insert_group(Guid, AuthzId, RequesterId, Data)
+    catch
+        Exception:Reason ->
+	    lager:error("global_groups_error guid: ~p Exception: ~p Reason: ~p Stacktrace: ~p ~n",
+			[Guid, Exception, Reason, erlang:get_stacktrace()]),
+    end,
     ok.
 
 migration_type() ->
