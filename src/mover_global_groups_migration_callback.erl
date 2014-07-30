@@ -37,7 +37,7 @@ migration_action(Object, _AcctInfo) ->
     catch
         Exception:Reason ->
 	    lager:error("global_groups_error guid: ~p Exception: ~p Reason: ~p Stacktrace: ~p ~n",
-			[Guid, Exception, Reason, erlang:get_stacktrace()]),
+			[Guid, Exception, Reason, erlang:get_stacktrace()])
     end,
     ok.
 
