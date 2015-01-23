@@ -133,8 +133,16 @@ get_state() ->
     gen_fsm:sync_send_all_state_event(?SERVER, get_state).
 -endif.
 
+-define(RETRY_SLEEP, 500).
 migrate_next(CallbackModule) ->
-    migrate(1, 1, CallbackModule).
+    case migrate(1, 1, CallbackModule) of
+        {error, halting_operations} ->
+            lager:info("Previous migration still halting, trying in ~p ms", [?RETRY_SLEEP]),
+            timer:sleep(?RETRY_SLEEP),
+            migrate_next(CallbackModule);
+        Return ->
+            Return
+    end.
 
 migrate(all, NumWorkers, CallbackModule) ->
     migrate(-1, NumWorkers, CallbackModule);
