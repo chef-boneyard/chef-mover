@@ -1,16 +1,17 @@
 -module(mover_policies_containers_creation_callback).
 
 -export([
-	 migration_init/0,
-	 migration_complete/0,
-	 migration_type/0,
-	 supervisor/0,
-	 migration_start_worker_args/2,
-	 error_halts_migration/0,
-	 reconfigure_object/2,
-	 migration_action/2,
-	 next_object/0
-	]).
+     migration_init/0,
+     migration_complete/0,
+     migration_type/0,
+     supervisor/0,
+     migration_start_worker_args/2,
+     error_halts_migration/0,
+     reconfigure_object/2,
+     migration_action/2,
+     next_object/0,
+     needs_account_dets/0
+    ]).
 
 -include("mover.hrl").
 -include("mv_oc_chef_authz.hrl").
@@ -62,6 +63,9 @@
           ]
          }
         ]).
+
+needs_account_dets() ->
+    false.
 
 migration_init() ->
     %% TODO: this fails if the pool is already created. Should be tolerant of
