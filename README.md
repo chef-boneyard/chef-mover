@@ -1,4 +1,15 @@
-# CHEF MOVER #
+# DEPRECATED CHEF MOVER #
+
+# DEPRECATED: Moved to chef-server repository
+
+New development on this component of the Chef Server now happens
+in the Chef Server repository:
+
+https://github.com/chef/chef-server
+
+This repository should only be used for changes to older versions
+of Chef Server.
+
 
 Orchestrate and execute data migration from Ruby-Chef/CouchDB to
 Erchef/PgSQL using moser and darklaunch.
@@ -137,5 +148,3 @@ basic dev work.
 [this repo]: https://githubt.com/opscode/chef-mover
 [opscode-platform-cookbooks]: https://githubt.com/opscode/opscode-platform-cookbooks
 [opscode-chef-mover]: https://githubt.com/opscode/opscode-chef-mover
-
-
