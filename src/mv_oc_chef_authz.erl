@@ -496,7 +496,9 @@ set_ace_for_entity(RequestorId, AuthzType, Id, AccessMethod,
     case mv_oc_chef_authz_http:request(Url, put, [], Body, EffectiveRequestorId) of
         ok -> ok;
         %% Expected errors are forbidden, not_found, server_error
-        {error, Error} -> {error, Error}
+        {error, Error} ->
+            lager:error("Failed to set ACE. Error: ~p  Url: ~p  Body: ~p", [Error, Url, Body]),
+            {error, Error}
     end.
 
 %%%%  %% @doc Adds the given client authz ID to the actors list of the organization's "clients"
