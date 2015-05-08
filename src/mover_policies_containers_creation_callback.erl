@@ -71,7 +71,8 @@ migration_init() ->
     %% TODO: this fails if the pool is already created. Should be tolerant of
     %% errors and also should tear this down after the migration
     mv_oc_chef_authz_http:create_pool(),
-    SuperUserAuthzId = envy:get(oc_chef_authz,authz_superuser_id, binary),
+    {ok, SuperuserResults} = sqerl:adhoc_select([username, id, authz_id], users, {username, equals, <<"pivotal">>}),
+    {_, SuperUserAuthzId} =  proplists:lookup(<<"authz_id">>,  hd(SuperuserResults)),
     Superuser = #mover_requestor{authz_id = SuperUserAuthzId},
 
     FindOrgsWithNoPoliciesContainer = <<"SELECT orgs.name, orgs.id, orgs.authz_id FROM orgs "
